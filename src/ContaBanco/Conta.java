@@ -1,18 +1,18 @@
 package ContaBanco;
 
 public class Conta {
-    private int numeroConta;
+    private long numeroConta;
     private double saldoConta;
     private String nomeCliente;
     private String emailCliente;
 
     private int numeroTelefone;
 
-    public int getNumeroConta() {
+    public long getNumeroConta() {
         return numeroConta;
     }
 
-    public void setNumeroConta(int numeroConta) {
+    public void setNumeroConta(long numeroConta) {
         this.numeroConta = numeroConta;
     }
 
@@ -48,19 +48,26 @@ public class Conta {
         this.numeroTelefone = numeroTelefone;
     }
 
-    public String depositar(double valor){
+    public void depositar(double valor) throws ValorInvalido {
+
+        if(valor <= 0){
+            throw new ValorInvalido("O valor depositado deve ser >= 0.");
+        }
+
         saldoConta += valor;
 
-        return "Depósito realizado com sucesso.";
     }
 
-    public String sacar(double valor) throws SaldoInsuficiente{
-        if (saldoConta == 0 || valor - saldoConta <= 0){
+    public void sacar(double valor) throws SaldoInsuficiente, ValorInvalido {
+        if (valor > saldoConta) {
             throw new SaldoInsuficiente("Seu saldo é insuficiente.");
         }
 
+        if(valor <= 0){
+            throw new ValorInvalido("O valor sacado deve ser >= 0.");
+        }
+
         saldoConta -= valor;
-        return "Saque relizado com sucesso.";
 
     }
 }
