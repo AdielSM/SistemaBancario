@@ -1,16 +1,30 @@
 import ContaBanco.Conta;
+import ContaBanco.SaldoInsuficiente;
+import ContaBanco.ValorInvalido;
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        in.useLocale(java.util.Locale.US);
 
-        HashMap<Integer, Conta> contas = new HashMap<>();
+        HashMap<Long, Conta> contas = new HashMap<>();
         boolean contaLogada = false;
+        Conta contaAtual = null;
+
+        //teste
+        Conta contaTeste = new Conta();
+        contaTeste.setNumeroConta(1234);
+        contaTeste.setNomeCliente("Teste");
+        contaTeste.setEmailCliente("Teste@email");
+        contaTeste.setNumeroTelefone(123456789);
+        contaTeste.setSaldoConta(1000);
+
+        contas.put(contaTeste.getNumeroConta(), contaTeste);
+
 
         System.out.println("==================================");
         System.out.println("Ben-vindo ao Banco do Brasil!");
@@ -26,10 +40,77 @@ public class Main {
                 if (validarOpcao(opcao, contaLogada)) {
 
                     if(contaLogada){
-                        System.out.println("Em desenvolvimento...");
+                        //colocar opção de histórico em dados da conta
+//                        1- Sacar
+//                        2- Depositar
+//                        3- Transferir
+//                        4- Ver dados da conta
+//                        5- Sair da conta atual
+//                        6- Sair do programa
+                        switch (opcao){
+                            case 1:
+                                while(true){
+                                    System.out.println("Digite o valor que você deseja sacar em R$. " +
+                                            "\n(Saldo disponível: " + contaAtual.getSaldoConta() + "R$ )");
+
+                                    if(in.hasNextDouble()){
+                                        double valor = in.nextDouble();
+
+                                        try {
+                                            contaAtual.sacar(valor);
+                                            System.out.println("Saque no valor de " + valor + "R$ realizado com sucesso." +
+                                                    "\nNovo saldo: " + contaAtual.getSaldoConta() + "R$");
+                                            break;
+                                        } catch (SaldoInsuficiente | ValorInvalido e){
+                                            System.out.println(e.getMessage());
+                                        }
+                                    }
+
+                                    else System.out.println("Digite apenas valores numéricos. \n");
+                                    in.next();
+
+                                }
+                                break;
+
+                            case 2:
+                                while(true){
+                                    System.out.println("Digite o valor que você deseja depositar em R$.");
+
+                                    if(in.hasNextDouble()){
+                                        double valor = in.nextDouble();
+
+                                        try {
+                                            contaAtual.depositar(valor);
+                                            System.out.println("Depósito no valor de " + valor + "R$ realizado com sucesso." +
+                                                    "\nNovo saldo: " + contaAtual.getSaldoConta() + "R$");
+                                            break;
+                                        } catch (ValorInvalido e){
+                                            System.out.println(e.getMessage());
+                                        }
+                                    }
+
+                                    System.out.println("Digite apenas valores numéricos.");
+                                    in.next();
+                                }
+                                break;
+
+                            case 6:
+                                System.out.println("Obrigado por utilizar o Banco do Brasil!");
+                                System.exit(0);
+
+                            default:
+                                System.out.println("Em desenvolvimento...");
+
+                        }
+
                     }
 
                     else {
+
+                       // 1 - Entrar em uma conta
+//                        2 - Criar conta
+//                        3 - Sair do programa
+
                         switch (opcao) {
 
                             case 1 -> {
@@ -37,11 +118,12 @@ public class Main {
                                     System.out.print("Digite o número da sua conta: ");
 
                                     if(in.hasNextInt()) {
-                                        int numeroConta = in.nextInt();
+                                        long numeroConta = in.nextInt();
 
                                         if (contas.containsKey(numeroConta)) {
                                             System.out.println("Sua conta foi encontrada e logada com sucesso! ");
                                             contaLogada = true;
+                                            contaAtual = contas.get(numeroConta);
                                             break;
                                         }
 
@@ -52,22 +134,26 @@ public class Main {
 
                             case 2 -> {
                                 try {
-                                    System.out.print("Digite o número da conta:");
-                                    int numeroConta = in.nextInt();
+                                    // colocar verificação nos inputs
+                                    System.out.print("Digite o número da conta: ");
+                                    long numeroConta = in.nextLong();
+                                    in.nextLine();
 
-                                    System.out.print("Digite o nome do cliente:");
-                                    String nomeCliente = in.next();
+                                    System.out.print("Digite o nome do cliente: ");
+                                    String nomeCliente = in.nextLine();
 
-                                    System.out.print("Digite o email do cliente:");
+                                    System.out.print("Digite o email do cliente: ");
                                     String emailCliente = in.next();
 
-                                    System.out.print("Digite o número de telefone do cliente:");
+                                    System.out.print("Digite o número de telefone do cliente: ");
                                     int numeroTelefone = in.nextInt();
 
                                     Conta conta = criarConta(numeroConta, nomeCliente, emailCliente, numeroTelefone);
                                     contas.put(numeroConta, conta);
 
                                     contaLogada = true;
+                                    contaAtual = conta;
+
                                     System.out.println("Conta criada com sucesso!");
                                 }
 
@@ -86,7 +172,6 @@ public class Main {
                             }
                         }
 
-
                     }
 
                 } else {
@@ -102,6 +187,7 @@ public class Main {
                 }
             } else {
                 System.out.println("Por favor, digite apenas números inteiros.");
+                in.next();
             }
         }
     }
@@ -127,14 +213,15 @@ public class Main {
             System.out.println("1- Sacar");
             System.out.println("2- Depositar");
             System.out.println("3- Transferir");
-            System.out.println("4- Ver saldo");
-            System.out.println("5- Sair");
+            System.out.println("4- Ver dados da conta");
+            System.out.println("5- Sair da conta atual");
+            System.out.println("6- Sair do programa");
         } else {
             System.out.println();
             System.out.println("Escolha uma opção:");
             System.out.println("1 - Entrar em uma conta");
             System.out.println("2 - Criar conta");
-            System.out.println("3 - Sair");
+            System.out.println("3 - Sair do programa");
         }
     }
 
@@ -152,7 +239,7 @@ public class Main {
 //
 //    }
 
-    public static Conta criarConta(int numeroConta, String nomeCliente, String emailCliente, int numeroTelefone){
+    public static Conta criarConta(long numeroConta, String nomeCliente, String emailCliente, int numeroTelefone){
 
         // fazer verificação se já existe uma conta que possua o mesmo número.
 
