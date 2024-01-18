@@ -1,6 +1,7 @@
 import ContaBanco.Conta;
 
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -8,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        HashMap<Integer, Conta> contas = new HashMap<Integer, Conta>();
+        HashMap<Integer, Conta> contas = new HashMap<>();
         boolean contaLogada = false;
 
         System.out.println("==================================");
@@ -30,31 +31,62 @@ public class Main {
 
                     else {
                         switch (opcao) {
+
                             case 1 -> {
-                                System.out.println("Digite o número da conta:");
-                                int numeroConta = in.nextInt();
+                                while(true){
+                                    System.out.print("Digite o número da sua conta: ");
 
-                                System.out.println("Digite o nome do cliente:");
-                                String nomeCliente = in.next();
+                                    if(in.hasNextInt()) {
+                                        int numeroConta = in.nextInt();
 
-                                System.out.println("Digite o email do cliente:");
-                                String emailCliente = in.next();
+                                        if (contas.containsKey(numeroConta)) {
+                                            System.out.println("Sua conta foi encontrada e logada com sucesso! ");
+                                            contaLogada = true;
+                                            break;
+                                        }
 
-                                System.out.println("Digite o número de telefone do cliente:");
-                                int numeroTelefone = in.nextInt();
-
-                                Conta conta = criarConta(numeroConta, nomeCliente, emailCliente, numeroTelefone);
-                                contas.put(numeroConta, conta);
-
-                                System.out.println("Conta criada com sucesso!");
+                                        System.out.println("Conta não encontrada, por favor, tente novamente.");
+                                    }
+                                }
                             }
+
                             case 2 -> {
+                                try {
+                                    System.out.print("Digite o número da conta:");
+                                    int numeroConta = in.nextInt();
+
+                                    System.out.print("Digite o nome do cliente:");
+                                    String nomeCliente = in.next();
+
+                                    System.out.print("Digite o email do cliente:");
+                                    String emailCliente = in.next();
+
+                                    System.out.print("Digite o número de telefone do cliente:");
+                                    int numeroTelefone = in.nextInt();
+
+                                    Conta conta = criarConta(numeroConta, nomeCliente, emailCliente, numeroTelefone);
+                                    contas.put(numeroConta, conta);
+
+                                    contaLogada = true;
+                                    System.out.println("Conta criada com sucesso!");
+                                }
+
+                                catch (InputMismatchException e){
+                                    System.out.println("Por favor, digite apenas números inteiros.");
+                                }
+
+                                catch (Exception e){ //deixar mais específico, criar exceções para cada tipo de erro.
+                                    System.out.println("Ocorreu um erro ao criar a conta.");
+                                }
+
+                            }
+                            case 3 -> {
                                 System.out.println("Obrigado por utilizar o Banco do Brasil!");
                                 System.exit(0);
                             }
                         }
 
-                        contaLogada = true;
+
                     }
 
                 } else {
@@ -77,13 +109,13 @@ public class Main {
     public static boolean validarOpcao(int opcao, boolean contaLogada) {
         if(contaLogada){
             return switch (opcao) {
-                case 1, 2, 3 -> true;
+                case 1, 2, 3, 4, 5, 6 -> true;
                 default -> false;
             };
         }
 
         return switch (opcao) {
-            case 1, 2, 3, 4, 5, 6 -> true;
+            case 1, 2, 3-> true;
             default -> false;
         };
     }
@@ -92,17 +124,17 @@ public class Main {
         if (contaLogada) {
             System.out.println();
             System.out.println("Escolha uma opção:");
-            System.out.println("1 - Entrar em uma conta");
-            System.out.println("2 - Criar conta");
-            System.out.println("3 - Sair");
-        } else {
-            System.out.println();
-            System.out.println("Escolha uma opção:");
             System.out.println("1- Sacar");
             System.out.println("2- Depositar");
             System.out.println("3- Transferir");
             System.out.println("4- Ver saldo");
             System.out.println("5- Sair");
+        } else {
+            System.out.println();
+            System.out.println("Escolha uma opção:");
+            System.out.println("1 - Entrar em uma conta");
+            System.out.println("2 - Criar conta");
+            System.out.println("3 - Sair");
         }
     }
 
@@ -121,6 +153,9 @@ public class Main {
 //    }
 
     public static Conta criarConta(int numeroConta, String nomeCliente, String emailCliente, int numeroTelefone){
+
+        // fazer verificação se já existe uma conta que possua o mesmo número.
+
         Conta conta = new Conta();
         conta.setNumeroConta(numeroConta);
         conta.setNomeCliente(nomeCliente);
