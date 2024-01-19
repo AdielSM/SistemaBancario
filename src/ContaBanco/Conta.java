@@ -5,47 +5,34 @@ public class Conta {
     private double saldoConta;
     private String nomeCliente;
     private String emailCliente;
-
     private int numeroTelefone;
+
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, int numeroTelefone, double saldoConta) {
+        this.numeroConta = numeroConta;
+        this.nomeCliente = nomeCliente;
+        this.emailCliente = emailCliente;
+        this.numeroTelefone = numeroTelefone;
+        this.saldoConta = saldoConta;
+    }
+
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, int numeroTelefone) {
+        this(numeroConta, nomeCliente, emailCliente, numeroTelefone, 0);
+    }
 
     public long getNumeroConta() {
         return numeroConta;
-    }
-
-    public void setNumeroConta(long numeroConta) {
-        this.numeroConta = numeroConta;
     }
 
     public double getSaldoConta() {
         return saldoConta;
     }
 
-    public void setSaldoConta(double saldoConta) {
-        this.saldoConta = saldoConta;
-    }
-
     public String getNomeCliente() {
         return nomeCliente;
     }
 
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
-    }
-
     public String getEmailCliente() {
         return emailCliente;
-    }
-
-    public void setEmailCliente(String emailCliente) {
-        this.emailCliente = emailCliente;
-    }
-
-    public int getNumeroTelefone() {
-        return numeroTelefone;
-    }
-
-    public void setNumeroTelefone(int numeroTelefone) {
-        this.numeroTelefone = numeroTelefone;
     }
 
     public void depositar(double valor) throws ValorInvalido {
@@ -68,6 +55,9 @@ public class Conta {
         }
 
         saldoConta -= valor;
+    }
+
+    public void transferir(int contaDestino, double valor){
 
     }
 }
