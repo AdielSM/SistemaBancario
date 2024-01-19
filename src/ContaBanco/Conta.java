@@ -38,7 +38,7 @@ class Conta {
         return emailCliente;
     }
 
-    public String gettelefone(){
+    public String getTelefone(){
         return telefone;
     }
 
@@ -63,13 +63,13 @@ class Conta {
         saldoConta -= valor;
     }
 
-    public void transferir(int contaDestino, double valor) throws ValorInvalido, SaldoInsuficiente {
-        if(valor <= 0){
-            throw new ValorInvalido("O valor transferido deve ser >= 0.");
-        }
-
-        sacar(valor);
-        // implementar somente com classe banco.
+    public void infoConta(){
+        System.out.println("Nome do cliente: " + nomeCliente +
+                           "\nEmail do cliente: " + emailCliente +
+                           "\nTelefone do cliente: " + telefone +
+                           "\nNúmero da conta: " + numeroConta +
+                           "\nSaldo da conta: " + saldoConta + "R$");
     }
+
 }
 
