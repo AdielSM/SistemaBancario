@@ -1,4 +1,4 @@
-package ContaBanco;
+package ContaBanco.exceptions;
 
 public class SaldoInsuficiente extends Exception {
     public SaldoInsuficiente(String mensagem){
