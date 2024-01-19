@@ -60,7 +60,7 @@ class Conta {
             throw new ValorInvalido("O valor sacado deve ser >= 0.");
         }
 
-        saldoConta -= valor;
+        saldoConta -= (double) Math.round(valor * 100.0) / 100;
     }
 
     public void infoConta(){

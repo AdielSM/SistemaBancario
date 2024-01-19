@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Banco {
-    private HashMap<Long, Conta> contas = new HashMap<>();
+    private final HashMap<Long, Conta> contas = new HashMap<>();
 
     public void criarConta(String nome, String email, String telefone, double saldoConta) throws ValorInvalido, NomeInvalido, EmailInvalido, TelefoneInvalido {
 
@@ -24,7 +24,7 @@ public class Banco {
     }
 
     public void logarConta(long numeroConta) throws ContaInvalida {
-        Conta conta = getConta(numeroConta);
+        getConta(numeroConta);
     }
 
     public void sacar(long numeroConta, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
@@ -37,9 +37,10 @@ public class Banco {
         conta.depositar(valor);
     }
 
-    public void transferir(long numeroContaRemetente, long numeroContaDestino, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
+    public void transferir(long numeroContaRemetente, String emailContaDestinatario, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
         Scanner in = new Scanner(System.in);
 
+        long numeroContaDestino = getNumeroConta(emailContaDestinatario);
         Conta contaRemetente = getConta(numeroContaRemetente);
         Conta contaDestino = getConta(numeroContaDestino);
 
@@ -54,8 +55,7 @@ public class Banco {
             if (opcao == 's'){
                 contaRemetente.sacar(valor);
                 contaDestino.depositar(valor);
-            } else {
-                System.out.println("Transferência cancelada.");
+
             }
         }
 
@@ -121,19 +121,31 @@ public class Banco {
     }
 
     public String getNomeCliente(long numeroConta) throws ContaInvalida {
+            Conta conta = getConta(numeroConta);
+            return conta.getNomeCliente();
+    }
+
+    public String getNomeCliente(String email) throws ContaInvalida{
+        long numeroConta = getNumeroConta(email);
         Conta conta = getConta(numeroConta);
         return conta.getNomeCliente();
     }
 
-    // todo: trocar para ser feito com senha
-    public long getNumeroConta(String nomeCliente) throws ContaInvalida {
+
+    public long getNumeroConta(String email) throws ContaInvalida {
         for (Conta conta : contas.values()) {
-            if (conta.getNomeCliente().equals(nomeCliente)) {
+            if (conta.getEmailCliente().equals(email)) {
                 return conta.getNumeroConta();
             }
         }
 
-        throw new ContaInvalida("Nome de cliente inexistente: " + nomeCliente);
+        throw new ContaInvalida("Email de conta inexistente: " + email);
+    }
+
+
+    public double getSaldoConta(long numeroConta) throws ContaInvalida {
+        Conta conta = getConta(numeroConta);
+        return conta.getSaldoConta();
     }
 
 }
