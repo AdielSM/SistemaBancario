@@ -1,12 +1,10 @@
 package ContaBanco;
 
-import ContaBanco.exceptions.EmailInvalido;
-import ContaBanco.exceptions.NomeInvalido;
-import ContaBanco.exceptions.TelefoneInvalido;
-import ContaBanco.exceptions.ValorInvalido;
+import ContaBanco.exceptions.*;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Banco {
     private HashMap<Long, Conta> contas = new HashMap<>();
@@ -15,11 +13,61 @@ public class Banco {
 
         long id = criarNumeroConta();
 
-        if(validarInfos(nome, email, telefone, saldoConta)){
+        if(validarInfo(nome, email, telefone, saldoConta)){
             Conta conta = new Conta(id, nome, email, telefone, saldoConta);
             contas.put(id, conta);
         }
+    }
 
+    public void criarConta(String nome, String email, String telefone) throws ValorInvalido, NomeInvalido, EmailInvalido, TelefoneInvalido {
+        criarConta(nome, email, telefone, 0);
+    }
+
+    public void sacar(long numeroConta, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
+        Conta conta = getConta(numeroConta);
+        conta.sacar(valor);
+    }
+
+    public void depositar(long numeroConta, double valor) throws ContaInvalida, ValorInvalido {
+        Conta conta = getConta(numeroConta);
+        conta.depositar(valor);
+    }
+
+    public void transferir(long numeroContaRemetente, long numeroContaDestino, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
+        Scanner in = new Scanner(System.in);
+
+        Conta contaRemetente = getConta(numeroContaRemetente);
+        Conta contaDestino = getConta(numeroContaDestino);
+
+        if(validarInfo(valor)){
+            System.out.println("Tem certeza que deseja transferir " + valor + "R$ para " + contaDestino.getNomeCliente() + "?");
+            char opcao;
+            do {
+                System.out.print("Digite s para sim e n para não: ");
+                opcao = in.next().toLowerCase().charAt(0);
+            } while (opcao != 's' && opcao != 'n');
+
+            if (opcao == 's'){
+                contaRemetente.sacar(valor);
+                contaDestino.depositar(valor);
+            } else {
+                System.out.println("Transferência cancelada.");
+            }
+        }
+
+    }
+
+    public void infoConta(long numeroConta) throws ContaInvalida {
+        Conta conta = getConta(numeroConta);
+        conta.infoConta();
+    }
+
+    private Conta getConta(long numeroConta) throws ContaInvalida {
+        if (!contas.containsKey(numeroConta)){
+            throw new ContaInvalida("Número de conta inexistente: " + numeroConta);
+        }
+
+        return contas.get(numeroConta);
     }
 
     private long criarNumeroConta(){
@@ -36,7 +84,7 @@ public class Banco {
         return id;
     }
 
-    public boolean validarInfos(String nome, String email, String telefone, double saldoConta) throws NomeInvalido, EmailInvalido, TelefoneInvalido, ValorInvalido {
+    private boolean validarInfo(String nome, String email, String telefone, double saldoConta) throws NomeInvalido, EmailInvalido, TelefoneInvalido, ValorInvalido {
         if (!nome.matches("^[a-zA-Z]*$")){
             throw new NomeInvalido("O nome deve conter apenas letras.");
         }
@@ -60,7 +108,12 @@ public class Banco {
         return true;
     }
 
-    public void criarConta(String nome, String email, String telefone) throws ValorInvalido, NomeInvalido, EmailInvalido, TelefoneInvalido {
-        criarConta(nome, email, telefone, 0);
+    private boolean validarInfo(double valor) throws ValorInvalido {
+        if (valor <= 0) {
+            throw new ValorInvalido("O valor transferido não pode ser <= 0.");
+        }
+
+        return true;
     }
+
 }
