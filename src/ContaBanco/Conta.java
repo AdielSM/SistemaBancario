@@ -1,22 +1,25 @@
 package ContaBanco;
 
-public class Conta {
-    private long numeroConta;
+import ContaBanco.exceptions.SaldoInsuficiente;
+import ContaBanco.exceptions.ValorInvalido;
+
+class Conta {
+    private final long numeroConta;
     private double saldoConta;
     private String nomeCliente;
     private String emailCliente;
-    private int numeroTelefone;
+    private String telefone;
 
-    public Conta(long numeroConta, String nomeCliente, String emailCliente, int numeroTelefone, double saldoConta) {
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone, double saldoConta) {
         this.numeroConta = numeroConta;
         this.nomeCliente = nomeCliente;
         this.emailCliente = emailCliente;
-        this.numeroTelefone = numeroTelefone;
+        this.telefone = telefone;
         this.saldoConta = saldoConta;
     }
 
-    public Conta(long numeroConta, String nomeCliente, String emailCliente, int numeroTelefone) {
-        this(numeroConta, nomeCliente, emailCliente, numeroTelefone, 0);
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone) {
+        this(numeroConta, nomeCliente, emailCliente, telefone, 0);
     }
 
     public long getNumeroConta() {
@@ -33,6 +36,10 @@ public class Conta {
 
     public String getEmailCliente() {
         return emailCliente;
+    }
+
+    public String gettelefone(){
+        return telefone;
     }
 
     public void depositar(double valor) throws ValorInvalido {
