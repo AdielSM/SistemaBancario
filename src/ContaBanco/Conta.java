@@ -42,7 +42,6 @@ public class Conta {
         }
 
         saldoConta += valor;
-
     }
 
     public void sacar(double valor) throws SaldoInsuficiente, ValorInvalido {
@@ -57,8 +56,13 @@ public class Conta {
         saldoConta -= valor;
     }
 
-    public void transferir(int contaDestino, double valor){
+    public void transferir(int contaDestino, double valor) throws ValorInvalido, SaldoInsuficiente {
+        if(valor <= 0){
+            throw new ValorInvalido("O valor transferido deve ser >= 0.");
+        }
 
+        sacar(valor);
+        // implementar somente com classe banco.
     }
 }
 
