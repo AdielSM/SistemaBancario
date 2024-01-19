@@ -23,6 +23,10 @@ public class Banco {
         criarConta(nome, email, telefone, 0);
     }
 
+    public void logarConta(long numeroConta) throws ContaInvalida {
+        Conta conta = getConta(numeroConta);
+    }
+
     public void sacar(long numeroConta, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
         Conta conta = getConta(numeroConta);
         conta.sacar(valor);
@@ -85,7 +89,7 @@ public class Banco {
     }
 
     private boolean validarInfo(String nome, String email, String telefone, double saldoConta) throws NomeInvalido, EmailInvalido, TelefoneInvalido, ValorInvalido {
-        if (!nome.matches("^[a-zA-Z]*$")){
+        if (!nome.matches("^[a-zA-ZÀ-ÿ ]*$")){
             throw new NomeInvalido("O nome deve conter apenas letras.");
         }
 
@@ -98,7 +102,7 @@ public class Banco {
         }
 
         if(telefone.length() != 11){
-            throw  new TelefoneInvalido("O número de telefone deve possuir 11 dígitos");
+            throw  new TelefoneInvalido("O número de telefone deve possuir 11 dígitos.");
         }
 
         if(saldoConta < 0){
@@ -114,6 +118,22 @@ public class Banco {
         }
 
         return true;
+    }
+
+    public String getNomeCliente(long numeroConta) throws ContaInvalida {
+        Conta conta = getConta(numeroConta);
+        return conta.getNomeCliente();
+    }
+
+    // todo: trocar para ser feito com senha
+    public long getNumeroConta(String nomeCliente) throws ContaInvalida {
+        for (Conta conta : contas.values()) {
+            if (conta.getNomeCliente().equals(nomeCliente)) {
+                return conta.getNumeroConta();
+            }
+        }
+
+        throw new ContaInvalida("Nome de cliente inexistente: " + nomeCliente);
     }
 
 }
