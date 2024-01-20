@@ -260,6 +260,13 @@ public class Main {
         }
     }
 
+    /**
+     * Valida a opção selecionada pelo usuário.
+     * 
+     * @param opcao a opção selecionada pelo usuário
+     * @param contaLogada indica se o usuário está logado em uma conta
+     * @return true se a opção for válida, false caso contrário
+     */
     public static boolean validarOpcao(int opcao, boolean contaLogada) {
         if (contaLogada) {
             return switch (opcao) {
@@ -274,7 +281,14 @@ public class Main {
         };
     }
 
-    public static void displayMenu(boolean contaLogada) {if (contaLogada) {
+    /**
+     * Exibe o menu de opções para o usuário de acordo com o estado da conta.
+     * 
+     * @param contaLogada indica se o usuário está logado em uma conta
+     * 
+     */
+    public static void displayMenu(boolean contaLogada) {
+        if (contaLogada) {
         System.out.println("""
                 
                 Escolha uma opção:
