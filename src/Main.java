@@ -12,11 +12,6 @@ public class Main {
         boolean contaLogada = false;
         long contaAtual = 0;
 
-        try {
-            banco.criarConta("Teste", "teste@mail", "12345678901", 1000);
-        } catch (ValorInvalido | NomeInvalido | EmailInvalido | TelefoneInvalido e) {
-            System.out.println(e.getMessage());
-        }
 
         System.out.println("==================================");
         System.out.println("Ben-vindo ao Banco do Brasil!");
@@ -41,57 +36,55 @@ public class Main {
                                                 "\n(Saldo disponível: " + banco.getSaldoConta(contaAtual) + "R$ )");
                                         System.out.println("Caso queira cancelar o saque, digite 0.");
 
-                                        if (in.hasNextDouble()) {
-
-                                            if (in.nextDouble() == 0){
-                                                System.out.println("Saque cancelado.");
-                                                break;
-                                            }
-
-                                            double valor = in.nextDouble();
-                                            banco.sacar(contaAtual, valor);
-                                            double novoSaldo = banco.getSaldoConta(contaAtual);
-
-                                            System.out.println("Saque no valor de " + valor + "R$ realizado com sucesso." +
-                                                    "\nNovo saldo: " + novoSaldo + "R$");
-                                            break;
-
-                                        } else {
-                                            System.out.println("Digite apenas valores numéricos. \n");
+                                        while (!in.hasNextDouble()) {
+                                            System.out.println("Digite apenas valores numéricos.");
                                             in.next();
                                         }
+
+                                        double valor = in.nextDouble();
+
+                                        if (valor == 0){
+                                            System.out.println("Saque cancelado.");
+                                            break;
+                                        }
+
+                                        banco.sacar(contaAtual, valor);
+                                        double novoSaldo = banco.getSaldoConta(contaAtual);
+
+                                        System.out.println("Saque no valor de " + valor + "R$ realizado com sucesso." +
+                                                "\nNovo saldo: " + novoSaldo + "R$");
+                                        break;
 
                                     } catch (ValorInvalido | SaldoInsuficiente| ContaInvalida e) {
                                         System.out.println(e.getMessage());
                                     }
                                 }
-
                             }
-
 
                             case 2 -> {
                                 while (true) {
 
                                     System.out.println("Digite o valor que você deseja depositar em R$.");
 
-                                    if (in.hasNextDouble()) {
-                                        double valor = in.nextDouble();
-                                        if (valor == 0){
-                                            System.out.println("Depósito cancelado.");
-                                            break;
-                                        }
-
-                                        try {
-                                            banco.depositar(contaAtual, valor);
-                                            System.out.println("Depósito no valor de " + valor + "R$ realizado com sucesso." +
-                                                    "\nNovo saldo: " + banco.getSaldoConta(contaAtual) + "R$");
-                                            break;
-                                        } catch ( ContaInvalida | ValorInvalido e) {
-                                            System.out.println(e.getMessage());
-                                        }
-                                    } else {
+                                    while (!in.hasNextDouble()) {
                                         System.out.println("Digite apenas valores numéricos.");
                                         in.next();
+                                    }
+
+                                    double valor = in.nextDouble();
+
+                                    if (valor == 0){
+                                        System.out.println("Depósito cancelado.");
+                                        break;
+                                    }
+
+                                    try {
+                                        banco.depositar(contaAtual, valor);
+                                        System.out.println("Depósito no valor de " + valor + "R$ realizado com sucesso." +
+                                                "\nNovo saldo: " + banco.getSaldoConta(contaAtual) + "R$");
+                                        break;
+                                    } catch ( ContaInvalida | ValorInvalido e) {
+                                        System.out.println(e.getMessage());
                                     }
 
                                 }
@@ -102,44 +95,49 @@ public class Main {
                                     try {
                                         System.out.println("Digite o email da conta para qual você deseja transferir em R$. " +
                                                 "\n(Saldo disponível: " + banco.getSaldoConta(contaAtual) + "R$ )");
-                                        System.out.println("Caso queira cancelar a transferência, digite 0.");
 
                                         String email = in.nextLine();
 
-                                        if(email.equals("0")){
+                                        if (email.equals(banco.getEmailCliente(contaAtual))){
+                                            System.out.println("Você não pode transferir para a sua própria conta.");
+                                            break;
+                                        }
+
+                                        System.out.println("Digite o valor que você deseja transferir para " +
+                                                banco.getNomeCliente(email));
+                                        System.out.println("Caso queira cancelar a transferência, digite 0.");
+
+                                        while (!in.hasNextDouble()) {
+                                            System.out.println("Digite apenas números.");
+                                            in.next();
+                                        }
+
+                                        double valor = in.nextDouble();
+
+                                        if (valor == 0){
                                             System.out.println("Transferência cancelada.");
                                             break;
                                         }
 
-                                        System.out.println("Digite o valor que você deseja transferir para " + banco.getNomeCliente(email));
+                                        double saldo = banco.getSaldoConta(contaAtual);
 
-                                        if(in.hasNextDouble()){
-                                            double valor = in.nextDouble();
-                                            double saldo = banco.getSaldoConta(contaAtual);
+                                        banco.transferir(contaAtual, email, valor);
+                                        double novoSaldo = banco.getSaldoConta(contaAtual);
 
-                                            banco.transferir(contaAtual, email, valor);
-                                            double novoSaldo = banco.getSaldoConta(contaAtual);
-
-                                            if (saldo == novoSaldo){
-                                                System.out.println("Transferência cancelada.");
-                                                break;
-                                            }
-
-                                            System.out.println("O valor de " + valor + "R$ foi transferido com " +
-                                                            "sucesso para" + banco.getNomeCliente(email) +
-                                                             "\nSeu novo saldo: " + banco.getSaldoConta(contaAtual));
+                                        if (saldo == novoSaldo){
+                                            System.out.println("Transferência cancelada.");
                                             break;
                                         }
 
-                                        else{
-                                            System.out.println("Digite apenas números.");
-                                            in.next();
-                                        }
+                                        System.out.println("O valor de " + valor + "R$ foi transferido com " +
+                                                "sucesso para " + banco.getNomeCliente(email) +
+                                                "\nSeu novo saldo: " + banco.getSaldoConta(contaAtual) + "R$");
+                                        break;
                                     }
 
-                                    catch (ContaInvalida | ValorInvalido | SaldoInsuficiente e){
-                                        System.out.println(e.getMessage());
-                                    }
+                                catch (ValorInvalido | SaldoInsuficiente | ContaInvalida e){
+                                    System.out.println(e.getMessage());
+                                }
 
                                 }
                             }
@@ -170,40 +168,39 @@ public class Main {
                         switch (opcao) {
                             case 1 -> {
                                 while (true) {
-                                    System.out.print("Digite o número da sua conta: ");
+                                    System.out.print("Digite o email da sua conta: ");
+                                    String email = in.nextLine();
+                                    System.out.print("Digite a senha da sua conta: ");
+                                    String senha = in.nextLine();
 
-                                    if (in.hasNextLong()) {
-                                        long numeroConta = in.nextLong();
-                                        try {
-                                            banco.logarConta(numeroConta);
-                                            contaLogada = true;
-                                            contaAtual = numeroConta;
-                                            System.out.println("Conta logada com sucesso!, " +
-                                                    "seja bem-vindo " + banco.getNomeCliente(contaAtual) + "!");
-                                            break;
-                                        }
-
-                                        catch (ContaInvalida e){
-                                            System.out.println(e.getMessage());
-                                        }
+                                    try {
+                                        banco.logarConta(email, senha);
+                                        contaLogada = true;
+                                        contaAtual = banco.getNumeroConta(email);
+                                        System.out.println("Conta logada com sucesso! " +
+                                                "Seja bem-vindo " + banco.getNomeCliente(contaAtual) + "!");
+                                        break;
                                     }
 
-                                    else {
-                                        System.out.println("Digite apenas números inteiros.");
+                                    catch (ContaInvalida | SenhaInvalida e){
+                                        System.out.println(e.getMessage());
                                     }
                                 }
                             }
 
                             case 2 -> {
                                 try {
-                                    System.out.print("Digite o nome do cliente: ");
+                                    System.out.print("Digite o seu nome: ");
                                     String nomeCliente = in.nextLine();
 
-                                    System.out.print("Digite o email do cliente: ");
+                                    System.out.print("Digite o seu email: ");
                                     String emailCliente = in.nextLine();
 
-                                    System.out.print("Digite o número de telefone do cliente: ");
+                                    System.out.print("Digite o seu número de telefone(com DDD): ");
                                     String numeroTelefone = in.nextLine();
+
+                                    System.out.print("Digite a sua senha: ");
+                                    String senha = in.nextLine();
 
                                     char escolha;
                                     do {
@@ -217,7 +214,7 @@ public class Main {
 
                                             if (in.hasNextDouble()) {
                                                 double saldoInicial = in.nextDouble();
-                                                banco.criarConta(nomeCliente, emailCliente, numeroTelefone, saldoInicial);
+                                                banco.criarConta(nomeCliente, emailCliente, numeroTelefone, senha, saldoInicial);
                                                 break;
                                             }
 
@@ -226,17 +223,15 @@ public class Main {
                                                 in.next();
                                             }
                                         }
-
-
                                     } else {
-                                         banco.criarConta(nomeCliente, emailCliente, numeroTelefone);
+                                         banco.criarConta(nomeCliente, emailCliente, numeroTelefone, senha);
                                     }
 
                                     contaLogada = true;
                                     contaAtual = banco.getNumeroConta(emailCliente);
                                     System.out.println("Conta criada com sucesso!");
 
-                                } catch (ValorInvalido | ContaInvalida | NomeInvalido | EmailInvalido | TelefoneInvalido e) {
+                                } catch (ValorInvalido | ContaInvalida | NomeInvalido | EmailInvalido | TelefoneInvalido | SenhaInvalida e) {
                                     System.out.println(e.getMessage());
                                 }
 
@@ -247,7 +242,6 @@ public class Main {
                                 System.exit(0);
                             }
                         }
-
                     }
 
                 } else {
