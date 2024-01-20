@@ -2,7 +2,7 @@
 
 O projeto Sistema Bancário é um projeto de estudo de Java, que visa simular um sistema bancário, com algumas funcionalidades mais comuns.
 
-É um sistema simples que visa por em prática conhecimentos da linguagem java como um geral e também como introdução ao paradigma de orientação a objetos.
+É um sistema simples que pretende por em prática conhecimentos da linguagem java como um geral e também como introdução ao paradigma de orientação a objetos.
 
 ## Funcionalidades
 
