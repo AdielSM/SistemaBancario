@@ -9,17 +9,21 @@ class Conta {
     private String nomeCliente;
     private String emailCliente;
     private String telefone;
+    private String senha;
 
-    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone, double saldoConta) {
+
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone,
+                 String senha, double saldoConta) {
         this.numeroConta = numeroConta;
         this.nomeCliente = nomeCliente;
         this.emailCliente = emailCliente;
         this.telefone = telefone;
         this.saldoConta = saldoConta;
+        this.senha = senha;
     }
 
-    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone) {
-        this(numeroConta, nomeCliente, emailCliente, telefone, 0);
+    public Conta(long numeroConta, String nomeCliente, String emailCliente, String telefone, String senha) {
+        this(numeroConta, nomeCliente, emailCliente, telefone, senha, 0);
     }
 
     public long getNumeroConta() {
@@ -40,6 +44,9 @@ class Conta {
 
     public String getTelefone(){
         return telefone;
+    }
+    public String getSenha() {
+        return senha;
     }
 
     public void depositar(double valor) throws ValorInvalido {
