@@ -101,7 +101,7 @@ public class Banco {
 
     /**
      * Transfere um determinado valor de uma conta para outra.
-     * 
+     * @param scanner o scanner para obter a opção do usuário
      * @param numeroContaRemetente o número da conta do remetente
      * @param emailContaDestinatario o email da conta do destinatário
      * @param valor o valor a ser transferido
@@ -109,8 +109,7 @@ public class Banco {
      * @throws ValorInvalido se o valor da transferência for inválido
      * @throws SaldoInsuficiente se o saldo da conta do remetente for insuficiente para a transferência
      */
-    public void transferir(long numeroContaRemetente, String emailContaDestinatario, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
-        Scanner in = new Scanner(System.in);
+    public void transferir(Scanner scanner, long numeroContaRemetente, String emailContaDestinatario, double valor) throws ContaInvalida, ValorInvalido, SaldoInsuficiente {
 
         long numeroContaDestino = getNumeroConta(emailContaDestinatario);
         Conta contaRemetente = getConta(numeroContaRemetente);
@@ -118,17 +117,17 @@ public class Banco {
 
         if(validarInfoTransferencia(valor)){
             System.out.println("Tem certeza que deseja transferir " + valor + "R$ para " + contaDestino.getNomeCliente() + "?");
-            char opcao;
+            String opcao;
             do {
                 System.out.print("Digite s para sim e n para não: ");
-                opcao = in.next().toLowerCase().charAt(0);
-            } while (opcao != 's' && opcao != 'n');
+                opcao = scanner.nextLine().toLowerCase();
+            } while (!opcao.equals("s") && !opcao.equals("n"));
 
-            if (opcao == 's'){
+            if (opcao.equals("s")){
                 contaRemetente.sacar(valor);
                 contaDestino.depositar(valor);
             }
-            in.close();
+
         }
     }
 
@@ -184,7 +183,7 @@ public class Banco {
             throw new NomeInvalido("O nome deve conter apenas letras.");
         }
 
-        if(!email.contains("@")){
+        if(!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
             throw new EmailInvalido("Digite um email válido.");
         }
 
@@ -210,7 +209,7 @@ public class Banco {
             throw new SenhaInvalida("A senha deve possuir ao menos 8 dígitos");
         }
 
-        if(!senha.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")){
+        if(!senha.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&.,=-])[A-Za-z\\d@$!%*#?&.,=-]{8,}$")){
             throw new SenhaInvalida("A senha deve conter ao menos um número, uma letra e um caracter especial.");
         }
         return true;
@@ -301,6 +300,17 @@ public class Banco {
     public double getSaldoConta(long numeroConta) throws ContaInvalida {
         Conta conta = getConta(numeroConta);
         return conta.getSaldoConta();
+    }
+
+    /**
+     * Retorna o nome dos clientes junmente com seus emails.
+     *
+     */
+    public void listarContas(){
+        System.out.println("\nEmails dos clientes cadastrados: ");
+        for (Conta conta : contas.values()) {
+            System.out.println(conta.getNomeCliente() + " - " + conta.getEmailCliente());
+        }
     }
 
 

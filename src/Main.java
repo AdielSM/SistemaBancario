@@ -1,4 +1,5 @@
 import ContaBanco.Banco;
+import ContaBanco.CarregarContas;
 import ContaBanco.exceptions.*;
 
 import java.util.Scanner;
@@ -12,6 +13,12 @@ public class Main {
         boolean contaLogada = false;
         long contaAtual = 0;
 
+        // Carregar contas do banco
+        try{
+            CarregarContas.carregarContas(banco);
+        } catch (ValorInvalido | NomeInvalido | EmailInvalido | TelefoneInvalido | SenhaInvalida e){
+            System.out.println(e.getMessage());
+        }
 
         System.out.println("==================================");
         System.out.println("Ben-vindo ao Banco do Brasil!");
@@ -26,7 +33,6 @@ public class Main {
                 in.nextLine();
 
                 if (validarOpcao(opcao, contaLogada)) {
-
                     if (contaLogada) {
                         switch (opcao) {
                             case 1 ->{
@@ -42,6 +48,7 @@ public class Main {
                                         }
 
                                         double valor = in.nextDouble();
+                                        in.nextLine();
 
                                         if (valor == 0){
                                             System.out.println("Saque cancelado.");
@@ -56,7 +63,7 @@ public class Main {
                                         break;
 
                                     } catch (ValorInvalido | SaldoInsuficiente| ContaInvalida e) {
-                                        System.out.println(e.getMessage());
+                                        System.out.println(e.getMessage() + "\n");
                                     }
                                 }
                             }
@@ -64,7 +71,8 @@ public class Main {
                             case 2 -> {
                                 while (true) {
 
-                                    System.out.println("Digite o valor que você deseja depositar em R$.");
+                                    System.out.println("Digite o valor que você deseja depositar em R$." +
+                                            "\n(Digite 0 para cancelar o depósito.)");
 
                                     while (!in.hasNextDouble()) {
                                         System.out.println("Digite apenas valores numéricos.");
@@ -72,6 +80,7 @@ public class Main {
                                     }
 
                                     double valor = in.nextDouble();
+                                    in.nextLine();
 
                                     if (valor == 0){
                                         System.out.println("Depósito cancelado.");
@@ -93,8 +102,10 @@ public class Main {
                             case 3 -> {
                                 while(true){
                                     try {
-                                        System.out.println("Digite o email da conta para qual você deseja transferir em R$. " +
+                                        System.out.println("\nDigite o email da conta para qual você deseja transferir em R$. " +
                                                 "\n(Saldo disponível: " + banco.getSaldoConta(contaAtual) + "R$ )");
+
+                                        banco.listarContas();
 
                                         String email = in.nextLine();
 
@@ -113,6 +124,7 @@ public class Main {
                                         }
 
                                         double valor = in.nextDouble();
+                                        in.nextLine();
 
                                         if (valor == 0){
                                             System.out.println("Transferência cancelada.");
@@ -121,7 +133,7 @@ public class Main {
 
                                         double saldo = banco.getSaldoConta(contaAtual);
 
-                                        banco.transferir(contaAtual, email, valor);
+                                        banco.transferir(in, contaAtual, email, valor);
                                         double novoSaldo = banco.getSaldoConta(contaAtual);
 
                                         if (saldo == novoSaldo){
@@ -256,6 +268,7 @@ public class Main {
             } else {
                 System.out.println("Por favor, digite apenas números inteiros.");
                 in.next();
+
             }
         }
     }

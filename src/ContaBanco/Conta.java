@@ -12,7 +12,6 @@ class Conta {
     private String senha;
 
 
-
     /**
      * Cria uma nova instância da classe Conta com os parâmetros fornecidos.
      * 
@@ -90,7 +89,7 @@ class Conta {
             throw new ValorInvalido("O valor depositado deve ser >= 0.");
         }
 
-        saldoConta += valor;
+        saldoConta += Math.floor(valor * 100) / 100;
     }
 
 
@@ -110,7 +109,7 @@ class Conta {
             throw new ValorInvalido("O valor sacado deve ser >= 0.");
         }
 
-        saldoConta -= (double) Math.round(valor * 100.0) / 100;
+        saldoConta = (saldoConta * 100 - Math.floor(valor * 100.0)) / 100;
     }
 
 
