@@ -127,7 +127,6 @@ public class Banco {
                 contaRemetente.sacar(valor);
                 contaDestino.depositar(valor);
             }
-
         }
     }
 
@@ -184,7 +183,7 @@ public class Banco {
         }
 
         if(!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
-            throw new EmailInvalido("Digite um email válido.");
+            throw new EmailInvalido("Digite um email válido. Não deve haver acentos e deve haver @.");
         }
 
         for(Conta conta: contas.values()){
